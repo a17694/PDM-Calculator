@@ -28,6 +28,8 @@ fun CalculatorView(modifier: Modifier = Modifier) {
 
     var calculatorBrain = remember { CalculatorBrain() }
 
+    var acOrBackLabel by remember { mutableStateOf("AC") }
+
     fun convertToDecimal(input: String): String {
         return input.replace(',', '.')
     }
@@ -54,24 +56,24 @@ fun CalculatorView(modifier: Modifier = Modifier) {
     }
 
     val buttons = listOf(
-        "AC", "<", "%", "÷",
+        acOrBackLabel, "+/-", "%", "÷",
         "7", "8", "9", "x",
         "4", "5", "6", "-",
         "1", "2", "3", "+",
-        "+/-", "0", ",", "="
+        "", "0", ",", "="
     )
 
     val onNumPress: (String) -> Unit = { num ->
         if (userIsInTheMiddleOfTyping) {
             if (display == "0") {
-                if (num == ".") {
-                    display = "0."
+                if (num == ",") {
+                    display = "0,"
                 } else {
                     display = num
                 }
             } else {
-                if (num == ".") {
-                    if (!display.contains(".")) {
+                if (num == ",") {
+                    if (!display.contains(",")) {
                         display += num
                     }
                 } else {
@@ -107,6 +109,16 @@ fun CalculatorView(modifier: Modifier = Modifier) {
                 val currentValue = getDisplay()
                 setDisplay(-currentValue)
             }
+            "=" -> {
+                setDisplay(calculatorBrain.doOperation(getDisplay()))
+                calculatorBrain.operand = 0.0
+                calculatorBrain.operation = null
+                userIsInTheMiddleOfTyping = false
+                acOrBackLabel = "AC"
+            }
+            "" -> {
+
+            }
             else -> {
                 val operation = CalculatorBrain.Operation.getOp(label)
                 when (operation) {
@@ -123,6 +135,7 @@ fun CalculatorView(modifier: Modifier = Modifier) {
                         onNumPress(label)
                     }
                 }
+                acOrBackLabel = "<"
             }
         }
     }
@@ -135,7 +148,7 @@ fun CalculatorView(modifier: Modifier = Modifier) {
     ) {
         // Display
         Text(
-            text = display,
+            text = unConvertToDecimal(display),
             modifier = Modifier
                 .padding(30.dp)
                 .align(Alignment.End),

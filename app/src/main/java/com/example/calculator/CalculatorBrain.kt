@@ -7,7 +7,6 @@ class CalculatorBrain {
         MULT("x"),
         DIV("÷"),
         SQRT("√"),
-
         PERCENT("%"),
         EQUAL("="),
         RAND("\uD83D\uDE02");
@@ -29,7 +28,6 @@ class CalculatorBrain {
             Operation.MULT -> operand * value
             Operation.DIV -> if (value != 0.0) operand / value else Double.NaN
             Operation.SQRT -> Math.sqrt(operand)
-
             Operation.PERCENT -> operand / 100
             Operation.RAND -> Math.random()
             Operation.EQUAL -> operand
