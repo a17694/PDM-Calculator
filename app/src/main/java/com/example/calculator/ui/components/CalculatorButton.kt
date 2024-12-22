@@ -23,7 +23,7 @@ fun CalculatorButton(
     onButtonPress: (String) -> Unit
 ) {
     val backgroundColor = when (label) {
-        "AC", "+/-", "%" -> Grey1
+        "AC", "+/-", "%", "<" -> Grey1
         "÷", "x", "-", "+", "=" -> Orange
         else -> Grey2
     }

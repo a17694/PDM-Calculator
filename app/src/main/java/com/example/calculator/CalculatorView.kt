@@ -54,11 +54,11 @@ fun CalculatorView(modifier: Modifier = Modifier) {
     }
 
     val buttons = listOf(
-        "AC", "+/-", "%", "÷",
+        "AC", "<", "%", "÷",
         "7", "8", "9", "x",
         "4", "5", "6", "-",
         "1", "2", "3", "+",
-        "", "0", ",", "="
+        "+/-", "0", ",", "="
     )
 
     val onNumPress: (String) -> Unit = { num ->
@@ -86,37 +86,43 @@ fun CalculatorView(modifier: Modifier = Modifier) {
     }
 
     val onOperationPressed: (String) -> Unit = { op ->
-
-        if (CalculatorBrain.Operation.RESET.op == op) {
-            display = "0"
-            calculatorBrain.operand = 0.0
-        } else {
-
-            //calculatorBrain.operand
-
-            userIsInTheMiddleOfTyping = false
-            setDisplay(calculatorBrain.doOperation(getDisplay()))
-            calculatorBrain.operand = getDisplay()
-            calculatorBrain.operation = CalculatorBrain.Operation.getOp(op)
-        }
+        userIsInTheMiddleOfTyping = false
+        setDisplay(calculatorBrain.doOperation(getDisplay()))
+        calculatorBrain.operand = getDisplay()
+        calculatorBrain.operation = CalculatorBrain.Operation.getOp(op)
     }
 
     val onButPress: (String) -> Unit = { label ->
-        val operation = CalculatorBrain.Operation.getOp(label)
-        when (operation) {
-            CalculatorBrain.Operation.SUM,
-            CalculatorBrain.Operation.SUB,
-            CalculatorBrain.Operation.MULT,
-            CalculatorBrain.Operation.DIV,
-            CalculatorBrain.Operation.PERCENT,
-            CalculatorBrain.Operation.SQRT,
-            CalculatorBrain.Operation.RESET,
-            CalculatorBrain.Operation.EQUAL,
-            CalculatorBrain.Operation.SIGNAL -> {
-                onOperationPressed(label)
+        when (label) {
+            "<" -> {
+                display = if (display.length > 1) display.dropLast(1) else "0"
+            }
+            "AC" -> {
+                display = "0"
+                calculatorBrain.operand = 0.0
+                calculatorBrain.operation = null
+                userIsInTheMiddleOfTyping = false
+            }
+            "+/-" -> {
+                val currentValue = getDisplay()
+                setDisplay(-currentValue)
             }
             else -> {
-                onNumPress(label)
+                val operation = CalculatorBrain.Operation.getOp(label)
+                when (operation) {
+                    CalculatorBrain.Operation.SUM,
+                    CalculatorBrain.Operation.SUB,
+                    CalculatorBrain.Operation.MULT,
+                    CalculatorBrain.Operation.DIV,
+                    CalculatorBrain.Operation.PERCENT,
+                    CalculatorBrain.Operation.SQRT,
+                    CalculatorBrain.Operation.EQUAL -> {
+                        onOperationPressed(label)
+                    }
+                    else -> {
+                        onNumPress(label)
+                    }
+                }
             }
         }
     }
